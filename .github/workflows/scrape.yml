@@ -1,0 +1,33 @@
+name: Match Summary Scraper
+on: workflow_dispatch
+
+jobs:
+  list:
+    runs-on: ubuntu-latest
+    outputs:
+      files: ${{ steps.gen.outputs.files }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: gen
+        run: echo "files=$(ls batch-processor/batches | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
+
+  scrape:
+    needs: list
+    strategy:
+      matrix:
+        file: ${{ fromJson(needs.list.outputs.files) }}
+      max-parallel: 10  # Increased to 10 concurrent jobs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm ci
+      - run: node batch-processor/scrape-batch.js
+        env:
+          BATCH_FILE: batch-processor/batches/${{ matrix.file }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.file }}-results
+          path: output.json
