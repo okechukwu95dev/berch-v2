@@ -9,7 +9,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - id: gen
-        run: echo "files=$(ls batch-processor/batch-processor/batches | jq -R -s -c 'split(\"\\n\")[:-1]')" >> $GITHUB_OUTPUT
+        run: |
+          files=$(ls batch-processor/batch-processor/batches/*.json \
+            | xargs -n1 basename \
+            | jq -R -s -c 'split("\n")[:-1]')
+          echo "files=$files" >> $GITHUB_OUTPUT
 
   scrape:
     needs: list
