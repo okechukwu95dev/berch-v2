@@ -9,10 +9,13 @@
     "scrape:master": "node scraper-master.js"
   },
   "dependencies": {
+    "@octokit/rest": "^21.1.1",
+    "adm-zip": "^0.5.16",
     "crypto": "^1.0.1",
-    "dotenv": "^16.0.3",
+    "dotenv": "^16.5.0",
     "minimist": "^1.2.8",
     "mongodb": "^5.1.0",
-    "puppeteer": "^19.7.2"
+    "puppeteer": "^19.7.2",
+    "unzipper": "^0.12.3"
   }
 }
